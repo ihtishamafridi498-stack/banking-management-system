@@ -1,12 +1,15 @@
-#  Banking Management System
+# Banking Management System
 
-A RESTful Banking Management System built using **Java Spring Boot** that provides secure and efficient management of customers, bank accounts, and financial transactions.
+A RESTful Banking Management System built with **Java Spring Boot** that enables customer, account, and transaction management through secure and well-structured APIs.
 
-The project follows a layered architecture using Controllers, Services, Repositories, DTOs, and Global Exception Handling to build a clean, maintainable, and scalable backend application.
+The project follows a layered architecture and demonstrates backend development best practices including DTOs, Bean Validation, centralized exception handling, and database integration using PostgreSQL.
+
+> **Project Status:** Increment 1 Completed ✅  
+> **Next Update:** Spring Security & JWT Authentication
 
 ---
 
-##  Features
+## Features
 
 ### Authentication
 - User Registration
@@ -14,65 +17,63 @@ The project follows a layered architecture using Controllers, Services, Reposito
 
 ### Customer Management
 - Create Customer
-- Get Customer by ID
-- Get All Customers
-- Update Customer Details
-- Update Customer Status
+- Retrieve Customer(s)
+- Update Customer Information
+- Activate / Deactivate Customer
 
 ### Account Management
 - Create Bank Account
-- View Account Details
-- View Customer Accounts
-- Update Account Status
+- Retrieve Account Details
+- Retrieve Customer Accounts
+- Activate / Freeze / Close Account
 
 ### Transaction Management
 - Deposit Money
 - Withdraw Money
 - Transfer Money Between Accounts
 
-### Validation & Error Handling
-- Bean Validation using Jakarta Validation
+### Additional Features
+- Layered Architecture
+- Request & Response DTOs
+- Bean Validation
 - Global Exception Handling
-- Custom Error Response DTO
-- Meaningful HTTP Status Codes
-
-### API Documentation
-- Swagger UI Integration
+- Custom Error Responses
+- Swagger UI Documentation
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 - Java 21
 - Spring Boot
-- Spring Web
 - Spring Data JPA
 - PostgreSQL
 - Maven
 - Lombok
-- Jakarta Validation
 - Swagger / OpenAPI
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
-src/main/java
-│
-├── controller
-├── service
-├── repository
-├── entity
-├── dto
-│   ├── request
-│   └── response
-├── exception
-├── enums
-└── config
+src
+└── main
+    ├── controller
+    ├── service
+    ├── serviceimpl
+    ├── repository
+    ├── model
+    ├── requestdto
+    ├── responsedto
+    ├── exception
+    ├── enums
+    └── resources
 ```
 
-The application follows the following architecture:
+---
+
+##  Layered Architecture
 
 ```
 Client
@@ -92,69 +93,105 @@ PostgreSQL Database
 
 ---
 
-##  Modules
-
-- Authentication
-- Customer
-- Account
-- Transaction
-
 ---
 
-##  Transaction Operations
+## Running the Project
 
-- Deposit
-- Withdraw
-- Transfer Between Accounts
+### Prerequisites
 
-Each transaction updates account balances while maintaining proper validation and exception handling.
+- Java 21
+- Maven
+- PostgreSQL
 
----
+### Steps
 
-## Validation
+1. Clone the repository
 
-The project validates incoming requests using Jakarta Bean Validation.
+```bash
+git clone https://github.com/ihtishamafridi498-stack/banking-management-system.git
+```
 
-Examples include:
+2. Configure the PostgreSQL database in `application.properties`.
 
-- Required Fields
-- Positive Amount Validation
-- Initial Deposit Validation
-- Invalid Request Handling
+3. Run the application.
 
----
+```bash
+mvn spring-boot:run
+```
 
-##  Exception Handling
-
-Global Exception Handling has been implemented to provide consistent API responses.
-
-Examples include:
-
-- Resource Not Found
-- Invalid Request
-- Validation Errors
-- Business Rule Violations
+4. Access Swagger UI after the application starts.
 
 ---
+## API Documentation
 
-##  API Documentation
+Once the application is running, open the following URL in your browser to access Swagger UI:
 
-All REST APIs can be tested using Swagger UI after running the application.
+```text
+http://localhost:8080/swagger-ui/index.html
+```
 
----
+Swagger UI provides interactive documentation for all available REST APIs and allows users to test endpoints directly from the browser.
 
-##  Future Improvements (Increment 2)
+### Interactive API Documentation (Swagger UI)
 
-The next version of this project will include:
+![Swagger UI](images/swagger-ui.png)
+
+## Database ER Diagram
+
+The following Entity Relationship (ER) diagram illustrates the database schema and relationships between the core entities of the Banking Management System.
+
+![ER Diagram](images/er-diagram.png)
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Authenticate user |
+
+### Customer
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/customer/{customerId}` | Get customer by ID |
+| GET | `/api/customer` | Get all customers |
+| PUT | `/api/customer/{customerId}` | Update customer details |
+| PATCH | `/api/customer/{customerId}/status` | Update customer status |
+
+### Account
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/accounts` | Create a new account |
+| GET | `/api/accounts` | Get all accounts |
+| GET | `/api/accounts/{accountNumber}` | Get account by account number |
+| GET | `/api/accounts/customer/{customerId}` | Get customer accounts |
+| PATCH | `/api/accounts/{accountNumber}/status` | Update account status |
+
+### Transaction
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/transactions/deposit` | Deposit money |
+| POST | `/api/transactions/withdraw` | Withdraw money |
+| POST | `/api/transactions/transfer` | Transfer funds |
+| GET | `/api/transactions` | Get all transactions |
+| GET | `/api/transactions/{transactionId}` | Get transaction by ID |
+| GET | `/api/transactions/account/{accountNumber}` | Get transactions by account |
+
+## Future Enhancements
 
 - Spring Security
-- JWT Authentication
-- Role-Based Authorization
-- Refresh Tokens
+- JWT Authentication & Authorization
+- Refresh Token Support
+- Docker Containerization
+
 ---
 
-##  Author
+## Author
 
 **Ihtisham Afridi**
 
-LinkedIn: *(www.linkedin.com/in/ihtisham-afridi-8856b63b7)*
+LinkedIn: https://www.linkedin.com/in/your-linkedin-profile
