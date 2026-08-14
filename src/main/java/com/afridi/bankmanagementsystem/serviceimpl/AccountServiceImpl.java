@@ -12,7 +12,6 @@ import com.afridi.bankmanagementsystem.requestdto.UpdateAccountStatusRequestDto;
 import com.afridi.bankmanagementsystem.responsedto.AccountResponseDto;
 import com.afridi.bankmanagementsystem.responsedto.CreateAccountResponseDto;
 import com.afridi.bankmanagementsystem.service.AccountService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
