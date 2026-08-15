@@ -4,16 +4,24 @@ A RESTful Banking Management System built with **Java Spring Boot** that enables
 
 The project follows a layered architecture and demonstrates backend development best practices including DTOs, Bean Validation, centralized exception handling, and database integration using PostgreSQL.
 
-> **Project Status:** Increment 1 Completed ✅  
-> **Next Update:** Spring Security & JWT Authentication
+> **Project Status:** Increment 2 Completed ✅
+> **Implemented:** Spring Security & JWT Authentication
 
 ---
 
 ## Features
 
-### Authentication
+### Authentication & Security
+
 - User Registration
 - User Login
+- Spring Security
+- JWT Authentication
+- Stateless Session Management
+- BCrypt Password Encryption
+- JWT Authentication Filter
+- Protected REST APIs
+- Authentication using Bearer Tokens
 
 ### Customer Management
 - Create Customer
@@ -47,6 +55,8 @@ The project follows a layered architecture and demonstrates backend development 
 - Java 21
 - Spring Boot
 - Spring Data JPA
+- - Spring Security
+- JSON Web Token (JWT)
 - PostgreSQL
 - Maven
 - Lombok
@@ -56,7 +66,7 @@ The project follows a layered architecture and demonstrates backend development 
 
 ## Project Structure
 
-```
+```text
 src
 └── main
     ├── controller
@@ -66,6 +76,8 @@ src
     ├── model
     ├── requestdto
     ├── responsedto
+    ├── security
+    ├── config
     ├── exception
     ├── enums
     └── resources
@@ -92,6 +104,50 @@ PostgreSQL Database
 ```
 
 ---
+
+
+---
+
+```md
+
+## Security Architecture
+
+The application uses Spring Security with JWT-based authentication.
+
+```text
+Client
+   │
+   │ Login Credentials
+   ▼
+Auth Controller
+   │
+   ▼
+Authentication Manager
+   │
+   ▼
+UserDetailsService
+   │
+   ▼
+PostgreSQL Database
+   │
+   ▼
+JWT Token Generated
+   │
+   ▼
+Client
+   │
+   │ Bearer Token
+   ▼
+JWT Authentication Filter
+   │
+   ▼
+JWT Validation
+   │
+   ▼
+Security Context
+   │
+   ▼
+Protected APIs
 
 ---
 
@@ -183,10 +239,10 @@ The following Entity Relationship (ER) diagram illustrates the database schema a
 
 ## Future Enhancements
 
-- Spring Security
-- JWT Authentication & Authorization
 - Refresh Token Support
 - Docker Containerization
+- Cloud Deployment
+- Additional Security Enhancements
 
 ---
 
