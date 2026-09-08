@@ -18,4 +18,6 @@ public interface AccountService {
     List<AccountResponseDto> getCustomerAccounts(Long customerId);
 
     AccountResponseDto updateAccountStatus(String accountNumber, UpdateAccountStatusRequestDto statusRequestDto);
+
+    void applyInterestToAllEligibleAccounts();
 }

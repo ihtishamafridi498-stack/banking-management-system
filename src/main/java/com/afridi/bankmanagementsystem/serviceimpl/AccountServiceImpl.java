@@ -1,31 +1,39 @@
 package com.afridi.bankmanagementsystem.serviceimpl;
 
-import com.afridi.bankmanagementsystem.enums.AccountStatus;
-import com.afridi.bankmanagementsystem.enums.CustomerStatus;
+
+import com.afridi.bankmanagementsystem.enums.*;
 import com.afridi.bankmanagementsystem.exception.*;
 import com.afridi.bankmanagementsystem.model.Account;
 import com.afridi.bankmanagementsystem.model.Customer;
+import com.afridi.bankmanagementsystem.model.Transaction;
 import com.afridi.bankmanagementsystem.repository.AccountRepository;
 import com.afridi.bankmanagementsystem.repository.CustomerRepository;
+import com.afridi.bankmanagementsystem.repository.TransactionRepository;
 import com.afridi.bankmanagementsystem.requestdto.CreateAccountRequestDto;
 import com.afridi.bankmanagementsystem.requestdto.UpdateAccountStatusRequestDto;
 import com.afridi.bankmanagementsystem.responsedto.AccountResponseDto;
 import com.afridi.bankmanagementsystem.responsedto.CreateAccountResponseDto;
 import com.afridi.bankmanagementsystem.service.AccountService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
+    private final TransactionRepository transactionRepository;
 
     public CreateAccountResponseDto createAccount(CreateAccountRequestDto requestDto) {
 
@@ -166,5 +174,50 @@ public class AccountServiceImpl implements AccountService {
                 updatedAccount.getCreatedAt(),
                 updatedAccount.getCustomer().getCustomerId()
         );
+    }
+
+    @Override
+    @Transactional
+    public void applyInterestToAllEligibleAccounts() {
+        List<Account> eligibleAccounts = accountRepository
+                .findByAccountTypeAndAccountStatus(AccountType.SAVINGS, AccountStatus.ACTIVE);
+
+        log.info("Interest accrual job started. {} eligible accounts found.", eligibleAccounts.size());
+
+        int processed = 0;
+        BigDecimal totalInterestCredited = BigDecimal.ZERO;
+
+        for (Account account : eligibleAccounts) {
+            if (account.getInterestRate() == null || account.getBalance() == null) {
+                continue;
+            }
+
+            BigDecimal interest = account.getBalance()
+                    .multiply(account.getInterestRate())
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            if (interest.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            account.setBalance(account.getBalance().add(interest));
+            account.setLastInterestCreditedAt(LocalDateTime.now());
+            accountRepository.save(account);
+
+            Transaction transaction = new Transaction();
+            transaction.setReceiverAccount(account);
+            transaction.setSenderAccount(null);
+            transaction.setAmount(interest);
+            transaction.setTransactionType(TransactionType.INTEREST);
+            transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+            transaction.setReferenceNumber("INT-" + account.getAccountNumber() + "-" + System.currentTimeMillis());
+            transactionRepository.save(transaction);
+
+            processed++;
+            totalInterestCredited = totalInterestCredited.add(interest);
+        }
+
+        log.info("Interest accrual job finished. {} accounts credited, total interest credited: {}",
+                processed, totalInterestCredited);
     }
 }

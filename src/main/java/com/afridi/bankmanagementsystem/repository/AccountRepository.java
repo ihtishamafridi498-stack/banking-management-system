@@ -1,5 +1,7 @@
 package com.afridi.bankmanagementsystem.repository;
 
+import com.afridi.bankmanagementsystem.enums.AccountStatus;
+import com.afridi.bankmanagementsystem.enums.AccountType;
 import com.afridi.bankmanagementsystem.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +11,5 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account,Long> {
     Optional<Account> findByAccountNumber(String accountNumber);
     List<Account> findByCustomerCustomerId(Long customerId);
+    List<Account> findByAccountTypeAndAccountStatus(AccountType accountType, AccountStatus accountStatus);
 }

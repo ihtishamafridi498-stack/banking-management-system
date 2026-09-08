@@ -30,6 +30,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     private LocalDateTime createdAt;
+    private BigDecimal interestRate;
+    private LocalDateTime lastInterestCreditedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -37,5 +39,9 @@ public class Account {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
+        if (accountType == AccountType.SAVINGS && interestRate == null) {
+            interestRate = new BigDecimal("0.035"); // 3.5% default
+        }
     }
+
 }

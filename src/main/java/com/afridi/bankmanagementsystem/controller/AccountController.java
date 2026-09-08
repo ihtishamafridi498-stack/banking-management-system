@@ -49,4 +49,11 @@ public class AccountController {
         AccountResponseDto responseDto=accountService.updateAccountStatus(accountNumber,statusRequestDto);
         return ResponseEntity.ok(responseDto);
         }
+
+    @PostMapping("/admin/interest-accrual/run")
+    public ResponseEntity<String> runInterestAccrual() {
+        accountService.applyInterestToAllEligibleAccounts();
+        return ResponseEntity.ok("Interest accrual job executed successfully.");
+    }
+
     }

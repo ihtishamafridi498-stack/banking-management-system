@@ -4,8 +4,8 @@ A RESTful Banking Management System built with **Java Spring Boot** that enables
 
 The project follows a layered architecture and demonstrates backend development best practices including DTOs, Bean Validation, centralized exception handling, and database integration using PostgreSQL.
 
-> **Project Status:** Increment 2 Completed ✅
-> **Implemented:** Spring Security & JWT Authentication
+> **Project Status:** Increment 3 Completed ✅
+> **Implemented:** Spring Security & JWT Authentication, Automated Background Jobs (Interest Accrual)
 
 ---
 
@@ -39,6 +39,14 @@ The project follows a layered architecture and demonstrates backend development 
 - Deposit Money
 - Withdraw Money
 - Transfer Money Between Accounts
+
+### Background Jobs
+- Automated Daily Interest Accrual for Savings Accounts
+- Scheduled Execution via Spring `@Scheduled`
+- Manual Trigger Endpoint for On-Demand Execution
+- Defensive Handling of Incomplete Account Data
+- Structured Logging for Job Auditability
+
 
 ### Additional Features
 - Layered Architecture
@@ -151,6 +159,48 @@ Protected APIs
 
 ---
 
+
+---
+
+## Background Job Architecture
+
+The system automatically credits interest to eligible savings accounts on a recurring schedule, without requiring any user-initiated request.
+
+```text
+Spring Scheduler (Cron Trigger)
+   │
+   ▼
+InterestAccrualScheduler
+   │
+   ▼
+AccountService
+   │
+   ├──► Fetch eligible accounts (SAVINGS + ACTIVE)
+   ├──► Calculate interest per account
+   ├──► Update account balance
+   └──► Record transaction (type: INTEREST)
+   │
+   ▼
+PostgreSQL Database
+```
+
+### How it works
+
+- A scheduled job runs once every 24 hours (`0 0 0 * * *` — midnight) using Spring's `@Scheduled` annotation.
+- The job queries all accounts where `accountType = SAVINGS` and `accountStatus = ACTIVE`.
+- For each eligible account, interest is calculated as `balance × interestRate`, credited to the account, and recorded as a new `Transaction` with type `INTEREST`.
+- Accounts with a missing interest rate or balance are safely skipped rather than causing a failure, ensuring the job is resilient to incomplete data.
+- Each run logs a summary — accounts found, accounts credited, and total interest credited — making job execution observable and auditable.
+
+### Manual Trigger
+
+Since scheduled jobs are not practical to demonstrate live, a protected endpoint allows the same logic to be triggered on demand. This calls the exact same service method used by the scheduled job, so there is no duplicated logic between automatic and manual execution.
+
+```text
+POST /api/accounts/admin/interest-accrual/run
+```
+
+
 ## Running the Project
 
 ### Prerequisites
@@ -225,6 +275,7 @@ The following Entity Relationship (ER) diagram illustrates the database schema a
 | GET | `/api/accounts/{accountNumber}` | Get account by account number |
 | GET | `/api/accounts/customer/{customerId}` | Get customer accounts |
 | PATCH | `/api/accounts/{accountNumber}/status` | Update account status |
+| POST | `/api/accounts/admin/interest-accrual/run` | Manually trigger interest accrual job |
 
 ### Transaction
 
