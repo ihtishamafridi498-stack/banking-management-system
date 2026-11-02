@@ -296,6 +296,7 @@ The following Entity Relationship (ER) diagram illustrates the database schema a
 - Additional Security Enhancements
 
 ---
+Testing GitHub commit access.
 
 ## Author
 
